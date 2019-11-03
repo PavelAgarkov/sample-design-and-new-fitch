@@ -6,6 +6,9 @@ use Model\AddressModel;
 use Delegate\Somes\Some;
 use Delegate\Somes\Ones\One;
 use Connecting\CurlConnect;
+use Call\ProcessSale;
+use Call\Product;
+use Call\Totalizer;
 
 include "autoload.php";
 
@@ -37,6 +40,30 @@ function curlConnect()
     var_dump($CURl);
 }
 
+function callback()
+{
+    $logger = function ($product) {
+        print "Записываем ({$product -> name} {$product -> price})\n";
+    };
+
+    $Processor = new ProcessSale();
+    $Processor -> registerCallback($logger);
+    $Processor -> sale(new Product("Туфли", 6));
+
+    print "<br>" . PHP_EOL;
+
+    $Processor -> sale(new Product("Кофе", 6));
+}
+
+function totalizer()
+{
+    $Processor = new ProcessSale();
+    $Processor -> registerCallback(Totalizer::warnAmount(8));
+
+    $Processor -> sale(new Product("Туфли", 6));
+    print "<br>";
+    $Processor -> sale(new Product("Кофе", 7));
+}
 
 
 
